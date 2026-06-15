@@ -10,7 +10,7 @@
             </div>
             <div class="row2">
                 <div class="form-group"><label>Year</label><input name="Year" type="number" value="@DateTime.Now.Year" class="form-control" /></div>
-                <div class="form-group" style="display:flex;align-items:flex-end"><label style="margin:0"><input type="checkbox" name="IsActive" value="true" checked /> Active</label></div>
+                <div class="form-group" style="display:flex;align-items:flex-end"><label style="margin:0"><input type="checkbox" name="IsActive" value="true" checked /><input type="hidden" name="IsActive" value="false" /> Active</label></div>
             </div>
             <div class="form-group"><label>Description</label><input name="Description" class="form-control" /></div>
             <button class="btn btn-primary">Create Batch</button>
@@ -45,7 +45,7 @@
                                         <input name="ClassLevel" class="form-control" value="@b.ClassLevel" />
                                         <input name="Year" type="number" class="form-control" value="@b.Year" />
                                         <input name="Description" class="form-control" value="@b.Description" />
-                                        <label><input type="checkbox" name="IsActive" value="true" checked="@b.IsActive" /> Active</label>
+                                        <label><input type="checkbox" name="IsActive" value="true" checked="@b.IsActive" /><input type="hidden" name="IsActive" value="false" /> Active</label>
                                         <button class="btn btn-primary btn-sm">Save</button>
                                     </form>
                                 </details>

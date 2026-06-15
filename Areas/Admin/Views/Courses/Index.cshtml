@@ -26,7 +26,7 @@
                 <div class="form-group"><label>Fees (₹)</label><input name="Fees" type="number" step="0.01" class="form-control" /></div>
                 <div class="form-group"><label>Display Order</label><input name="DisplayOrder" type="number" value="0" class="form-control" /></div>
             </div>
-            <label><input type="checkbox" name="IsActive" value="true" checked /> Active</label>
+            <label><input type="checkbox" name="IsActive" value="true" checked /><input type="hidden" name="IsActive" value="false" /> Active</label>
             <button class="btn btn-primary">Add Course</button>
         </form>
     </div>
@@ -63,7 +63,7 @@
                                         <input name="DurationText" class="form-control" value="@c.DurationText" />
                                         <input name="Fees" type="number" step="0.01" class="form-control" value="@c.Fees" />
                                         <input name="DisplayOrder" type="number" class="form-control" value="@c.DisplayOrder" />
-                                        <label><input type="checkbox" name="IsActive" value="true" checked="@c.IsActive" /> Active</label>
+                                        <label><input type="checkbox" name="IsActive" value="true" checked="@c.IsActive" /><input type="hidden" name="IsActive" value="false" /> Active</label>
                                         <button class="btn btn-primary btn-sm">Save</button>
                                     </form>
                                 </details>

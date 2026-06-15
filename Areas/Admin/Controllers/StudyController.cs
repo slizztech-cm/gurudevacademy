@@ -3,13 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using GurudevDefenceAcademy.Data;
 using GurudevDefenceAcademy.Middleware;
 using GurudevDefenceAcademy.Models.Entities;
+using GurudevDefenceAcademy.Services;
 
 namespace GurudevDefenceAcademy.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Route("admin/study")]
 [AdminAuth]
-public class StudyController(AppDbContext db, IWebHostEnvironment env) : Controller
+public class StudyController(
+    AppDbContext db,
+    IWebHostEnvironment env,
+    ISupabaseStorageService storage) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index()
@@ -37,12 +41,9 @@ public class StudyController(AppDbContext db, IWebHostEnvironment env) : Control
                 TempData["Err"] = "Only PDF files are allowed.";
                 return RedirectToAction(nameof(Index));
             }
-            var dir = Path.Combine(env.WebRootPath, "uploads");
-            Directory.CreateDirectory(dir);
-            var name = $"{Guid.NewGuid():N}.pdf";
-            await using (var fs = System.IO.File.Create(Path.Combine(dir, name)))
-                await file.CopyToAsync(fs);
-            model.FileUrl = $"/uploads/{name}";
+            var saved = await SaveUploadAsync(file);
+            if (saved is null) { TempData["Err"] = "File upload failed. Please try again."; return RedirectToAction(nameof(Index)); }
+            model.FileUrl = saved;
         }
 
         if (string.IsNullOrWhiteSpace(model.FileUrl))
@@ -78,17 +79,14 @@ public class StudyController(AppDbContext db, IWebHostEnvironment env) : Control
                 TempData["Err"] = "Only PDF files are allowed.";
                 return RedirectToAction(nameof(Index));
             }
-            var dir = Path.Combine(env.WebRootPath, "uploads");
-            Directory.CreateDirectory(dir);
-            var name = $"{Guid.NewGuid():N}.pdf";
-            await using (var fs = System.IO.File.Create(Path.Combine(dir, name)))
-                await file.CopyToAsync(fs);
-            DeleteLocalFile(p.FileUrl);
-            p.FileUrl = $"/uploads/{name}";
+            var saved = await SaveUploadAsync(file);
+            if (saved is null) { TempData["Err"] = "File upload failed. Please try again."; return RedirectToAction(nameof(Index)); }
+            await RemoveFileAsync(p.FileUrl);
+            p.FileUrl = saved;
         }
         else if (!string.IsNullOrWhiteSpace(model.FileUrl) && model.FileUrl.Trim() != p.FileUrl)
         {
-            DeleteLocalFile(p.FileUrl);   // switching to a new/external URL
+            await RemoveFileAsync(p.FileUrl);   // switching to a new/external URL
             p.FileUrl = model.FileUrl.Trim();
         }
 
@@ -110,7 +108,7 @@ public class StudyController(AppDbContext db, IWebHostEnvironment env) : Control
         var p = await db.StudyPdfs.FindAsync(id);
         if (p is not null)
         {
-            DeleteLocalFile(p.FileUrl);
+            await RemoveFileAsync(p.FileUrl);
             db.StudyPdfs.Remove(p);
             await db.SaveChangesAsync();
         }
@@ -118,11 +116,35 @@ public class StudyController(AppDbContext db, IWebHostEnvironment env) : Control
         return RedirectToAction(nameof(Index));
     }
 
-    // Removes the backing file if it lives under wwwroot/uploads (external URLs left alone).
-    private void DeleteLocalFile(string? fileUrl)
+    // Saves an uploaded PDF to Supabase Storage when configured (persists on
+    // ephemeral hosts), otherwise to wwwroot/uploads for local dev. Returns the URL.
+    private async Task<string?> SaveUploadAsync(IFormFile file)
     {
-        if (string.IsNullOrEmpty(fileUrl) || !fileUrl.StartsWith("/uploads/")) return;
-        var path = Path.Combine(env.WebRootPath, fileUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
-        if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+        if (storage.IsConfigured)
+        {
+            await using var s = file.OpenReadStream();
+            return await storage.UploadPdfAsync(s);
+        }
+        var dir = Path.Combine(env.WebRootPath, "uploads");
+        Directory.CreateDirectory(dir);
+        var name = $"{Guid.NewGuid():N}.pdf";
+        await using var fs = System.IO.File.Create(Path.Combine(dir, name));
+        await file.CopyToAsync(fs);
+        return $"/uploads/{name}";
+    }
+
+    // Deletes the backing file: a local wwwroot/uploads file, or a Supabase object.
+    private async Task RemoveFileAsync(string? url)
+    {
+        if (string.IsNullOrEmpty(url)) return;
+        if (url.StartsWith("/uploads/"))
+        {
+            var path = Path.Combine(env.WebRootPath, url.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+        }
+        else
+        {
+            await storage.DeleteAsync(url);
+        }
     }
 }

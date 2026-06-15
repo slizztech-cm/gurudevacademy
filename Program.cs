@@ -64,9 +64,10 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddSingleton<IOtpService, OtpService>();
 
-// ---- YouTube channel sync ----
+// ---- HTTP + external storage ----
 builder.Services.AddHttpClient("youtube");
 builder.Services.AddScoped<IYoutubeChannelService, YoutubeChannelService>();
+builder.Services.AddScoped<ISupabaseStorageService, SupabaseStorageService>();
 
 var app = builder.Build();
 

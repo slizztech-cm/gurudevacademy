@@ -1,0 +1,93 @@
+@model List<YoutubeVideo>
+@{
+    var batches = ViewBag.Batches as List<Batch> ?? new();
+    var sel = ViewBag.SelectedBatch as int?;
+}
+<div class="panel">
+    <div class="panel-head"><h2>➕ Add Class Video</h2></div>
+    <div class="panel-body">
+        <p class="muted mb">Paste a YouTube link (or video id) from the academy's channel. It'll be embedded in the student classroom.</p>
+        <form method="post" action="/admin/videos/create" class="adm-form">
+            @Html.AntiForgeryToken()
+            <div class="row2">
+                <div class="form-group">
+                    <label>Batch *</label>
+                    <select name="BatchId" class="form-control" required>
+                        <option value="">— Select batch —</option>
+                        @foreach (var b in batches) { <option value="@b.Id" selected="@(b.Id == sel)">@b.Name</option> }
+                    </select>
+                </div>
+                <div class="form-group"><label>Subject</label><input name="Subject" class="form-control" placeholder="Physics / Maths..." /></div>
+            </div>
+            <div class="form-group"><label>Title *</label><input name="Title" class="form-control" required /></div>
+            <div class="form-group"><label>YouTube link or ID *</label><input name="YoutubeRef" class="form-control" placeholder="https://youtu.be/... or dQw4w9WgXcQ" required /></div>
+            <div class="row2">
+                <div class="form-group"><label>Description</label><input name="Description" class="form-control" /></div>
+                <div class="form-group"><label>Display Order</label><input name="DisplayOrder" type="number" value="0" class="form-control" /></div>
+            </div>
+            <input type="hidden" name="IsActive" value="true" />
+            <button class="btn btn-primary">Add Video</button>
+        </form>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-head">
+        <h2>Videos (@Model.Count)</h2>
+        <form method="get" action="/admin/videos">
+            <select name="batchId" class="form-control" onchange="this.form.submit()">
+                <option value="">All batches</option>
+                @foreach (var b in batches) { <option value="@b.Id" selected="@(b.Id == sel)">@b.Name</option> }
+            </select>
+        </form>
+    </div>
+    <div class="panel-body">
+        <div class="tbl-wrap">
+            <table class="tbl">
+                <thead><tr><th>Title</th><th>Batch</th><th>Subject</th><th>Order</th><th>Action</th></tr></thead>
+                <tbody>
+                @foreach (var v in Model)
+                {
+                    <tr>
+                        <td>@v.Title<br><small class="muted">@v.YoutubeRef</small></td>
+                        <td>@(v.Batch?.Name)</td>
+                        <td>@v.Subject</td>
+                        <td>@v.DisplayOrder</td>
+                        <td>
+                            <div class="row-actions">
+                                <details>
+                                    <summary class="btn btn-ghost btn-sm">Edit</summary>
+                                    <form method="post" action="/admin/videos/update" class="adm-form" style="margin-top:.6rem;min-width:260px">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="Id" value="@v.Id" />
+                                        <label>Batch</label>
+                                        <select name="BatchId" class="form-control">
+                                            @foreach (var b in batches) { <option value="@b.Id" selected="@(b.Id == v.BatchId)">@b.Name</option> }
+                                        </select>
+                                        <label>Title</label>
+                                        <input name="Title" class="form-control" value="@v.Title" />
+                                        <label>YouTube link or ID</label>
+                                        <input name="YoutubeRef" class="form-control" value="@v.YoutubeRef" />
+                                        <label>Subject</label>
+                                        <input name="Subject" class="form-control" value="@v.Subject" />
+                                        <label>Description</label>
+                                        <input name="Description" class="form-control" value="@v.Description" />
+                                        <label>Display Order</label>
+                                        <input name="DisplayOrder" type="number" class="form-control" value="@v.DisplayOrder" />
+                                        <button class="btn btn-primary btn-sm" style="margin-top:.5rem">Save</button>
+                                    </form>
+                                </details>
+                                <form method="post" action="/admin/videos/delete/@v.Id" data-confirm="Remove this video?">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.Count == 0) { <p class="muted mt">No videos yet.</p> }
+    </div>
+</div>

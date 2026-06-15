@@ -1,0 +1,48 @@
+@{
+    var recent = ViewBag.RecentJoins as List<JoinRequest> ?? new();
+}
+<div class="admin-stats">
+    <div class="admin-stat"><div class="ic">🗂️</div><b>@ViewBag.Categories</b><span>Categories</span></div>
+    <div class="admin-stat"><div class="ic">🎯</div><b>@ViewBag.Courses</b><span>Courses</span></div>
+    <div class="admin-stat"><div class="ic">🎓</div><b>@ViewBag.Students</b><span>Students</span></div>
+    <div class="admin-stat"><div class="ic">👥</div><b>@ViewBag.Batches</b><span>Batches</span></div>
+</div>
+
+<div class="grid grid-2">
+    <a href="/admin/joins" class="card">
+        <h3>📝 New Join Requests</h3>
+        <p class="muted">You have <b class="text-gold">@ViewBag.NewJoins</b> new enquiries waiting.</p>
+    </a>
+    <a href="/admin/messages" class="card">
+        <h3>✉️ Unread Messages</h3>
+        <p class="muted">You have <b class="text-gold">@ViewBag.Unread</b> unread contact messages.</p>
+    </a>
+</div>
+
+<div class="panel mt2">
+    <div class="panel-head"><h2>Recent Join Requests</h2><a href="/admin/joins" class="btn btn-ghost btn-sm">View all →</a></div>
+    <div class="panel-body">
+        @if (recent.Count == 0)
+        {
+            <p class="muted">No enquiries yet.</p>
+        }
+        else
+        {
+            <div class="tbl-wrap">
+                <table class="tbl">
+                    <thead><tr><th>Name</th><th>Phone</th><th>Course</th><th>When</th><th>Status</th></tr></thead>
+                    <tbody>
+                    @foreach (var j in recent)
+                    {
+                        <tr>
+                            <td>@j.Name</td><td>@j.Phone</td><td>@j.CourseName</td>
+                            <td>@j.CreatedAt.ToString("dd MMM, HH:mm")</td>
+                            <td><span class="pill @(j.Status == "new" ? "on" : "off")">@j.Status</span></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

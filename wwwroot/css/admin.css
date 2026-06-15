@@ -1,0 +1,76 @@
+/* ===========================================================
+   Admin panel layout
+   =========================================================== */
+.admin-shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.admin-side{background:var(--navy2);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.admin-brand{display:flex;align-items:center;gap:.6rem;padding:1.1rem 1.2rem;border-bottom:1px solid var(--line)}
+.admin-brand img{height:38px}
+.admin-brand b{font-size:.95rem}
+.admin-brand span{font-size:.6rem;color:var(--gold-l);letter-spacing:1px;display:block}
+.admin-menu{flex:1;padding:.8rem;overflow-y:auto}
+.admin-menu a{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;border-radius:9px;
+  color:var(--text2);font-weight:600;font-size:.9rem;margin-bottom:.2rem;transition:.15s}
+.admin-menu a:hover{background:var(--navy);color:#fff}
+.admin-menu a.active{background:linear-gradient(135deg,var(--blue-d),var(--olive-d));color:#fff}
+.admin-menu .grp{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--text3);
+  padding:.9rem .9rem .3rem}
+.admin-side .logout{padding:.8rem;border-top:1px solid var(--line)}
+
+.admin-main{display:flex;flex-direction:column;min-width:0}
+.admin-top{height:60px;border-bottom:1px solid var(--line);display:flex;align-items:center;
+  justify-content:space-between;padding:0 1.4rem;background:var(--navy);position:sticky;top:0;z-index:50}
+.admin-top h1{font-size:1.1rem}
+.admin-body{padding:1.6rem;flex:1}
+.admin-mob-bar{display:none}
+
+@media(max-width:880px){
+  .admin-shell{grid-template-columns:1fr}
+  .admin-side{position:fixed;left:-260px;width:240px;z-index:200;transition:.25s}
+  .admin-side.open{left:0}
+  .admin-mob-bar{display:flex;align-items:center;justify-content:space-between;
+    height:56px;padding:0 1rem;background:var(--navy2);border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:60}
+  .admin-mob-bar button{background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer}
+  .admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150}
+  .admin-overlay.open{display:block}
+}
+
+/* stat tiles */
+.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.6rem}
+@media(max-width:880px){.admin-stats{grid-template-columns:repeat(2,1fr)}}
+.admin-stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.3rem}
+.admin-stat .ic{font-size:1.5rem;margin-bottom:.4rem}
+.admin-stat b{font-size:1.9rem;display:block;color:#fff}
+.admin-stat span{font-size:.78rem;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+
+/* panel */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:1.4rem;overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.3rem;border-bottom:1px solid var(--line)}
+.panel-head h2{font-size:1.05rem}
+.panel-body{padding:1.3rem}
+
+/* inline form row in admin */
+.adm-form{display:grid;gap:1rem}
+.adm-form .row2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.adm-form .row2{grid-template-columns:1fr}}
+
+.pill{padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:700}
+.pill.on{background:rgba(47,174,94,.15);color:#5fe39a}
+.pill.off{background:rgba(224,82,77,.15);color:#ff9b9b}
+.row-actions{display:flex;gap:.4rem}
+
+/* toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card2);border:1px solid var(--gold);
+  color:#fff;padding:.9rem 1.3rem;border-radius:12px;box-shadow:var(--shadow);
+  transform:translateY(120px);opacity:0;transition:.3s;z-index:999}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* channel videos */
+.adm-vid{display:flex;align-items:center;gap:.7rem;max-width:420px}
+.adm-thumb{width:84px;height:48px;object-fit:cover;border-radius:6px;flex:none}
+.form-control-sm{padding:.3rem .5rem;font-size:.82rem}
+.topic-form{display:flex;align-items:center;gap:.35rem}
+.topic-form .form-control{min-width:120px}
+.mb{margin-bottom:1.2rem}

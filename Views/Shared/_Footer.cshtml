@@ -1,0 +1,42 @@
+@inject IConfiguration Config
+@{
+    var addr  = Config["Academy:Address"] ?? "Indira Nagar, Raebareli, Uttar Pradesh";
+    var email = Config["Academy:Email"] ?? "";
+    var phone = Config["Academy:Phone"] ?? "";
+}
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">
+                    <img src="~/img/logo.svg" alt="logo" />
+                    <div>
+                        <b style="display:block;color:#fff">Gurudev Defence Academy</b>
+                        <span class="text-gold" style="font-size:.72rem;letter-spacing:1.5px">DISCIPLINE • DEDICATION • SUCCESS</span>
+                    </div>
+                </div>
+                <p class="addr">📍 @addr</p>
+                @if (!string.IsNullOrWhiteSpace(phone)) { <p class="addr">📞 @phone</p> }
+                @if (!string.IsNullOrWhiteSpace(email)) { <p class="addr">✉️ @email</p> }
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <a href="/">Home</a>
+                <a href="/courses">Courses</a>
+                <a href="/study-material">Study Material</a>
+                <a href="/join">Join a Course</a>
+                <a href="/contact">Contact Us</a>
+            </div>
+            <div>
+                <h4>Programs</h4>
+                <a href="/courses">Agniveer</a>
+                <a href="/courses">Airforce / Defence Exams</a>
+                <a href="/courses">Class 9–12 (PCM + English)</a>
+                <a href="/account/register">Student Login</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © @DateTime.Now.Year Gurudev Defence Academy, Raebareli. All rights reserved.
+        </div>
+    </div>
+</footer>

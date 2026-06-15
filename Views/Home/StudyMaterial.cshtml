@@ -1,0 +1,36 @@
+@model List<StudyPdf>
+<section class="hero" style="padding:3rem 0">
+    <div class="container center">
+        <span class="hero-badge">📚 Free & Premium Notes</span>
+        <h1>Study Material</h1>
+        <p style="margin:1rem auto 0">Download notes and PDFs for defence exams and school subjects.</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        @if (!Model.Any())
+        {
+            <div class="empty"><span class="ic">📭</span><p>No study material uploaded yet. Check back soon!</p></div>
+        }
+        else
+        {
+            <div class="grid grid-3">
+                @foreach (var p in Model)
+                {
+                    <div class="card pdf-card">
+                        <span class="ic">📄</span>
+                        <h3>@p.Title</h3>
+                        @if (!string.IsNullOrEmpty(p.Subject)) { <span class="chip">@p.Subject</span> }
+                        <p>@p.Description</p>
+                        <div class="flex between items-center mt">
+                            @if (p.IsFree) { <span class="chip badge-ok">Free</span> }
+                            else { <span class="chip badge-new">₹@p.Price</span> }
+                            <a href="@p.FileUrl" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Download ↓</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>

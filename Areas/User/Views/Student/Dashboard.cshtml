@@ -1,0 +1,27 @@
+@{
+    var user = ViewBag.User as AppUser;
+}
+<div class="dash-hero">
+    <div>
+        <h1>Namaste, @(user?.Name ?? "Student")! 🇮🇳</h1>
+        <p>
+            @if (user?.Batch is not null) { <text>Batch: <b class="text-gold">@user.Batch.Name</b></text> }
+            else { <text>You're not assigned to a batch yet — update your profile or contact the academy.</text> }
+        </p>
+    </div>
+    <a href="/student/profile" class="btn btn-ghost btn-sm">⚙️ Edit Profile</a>
+</div>
+
+<div class="stat-row">
+    <div class="stat"><b>@ViewBag.VideoCount</b><span>Class Videos</span></div>
+    <div class="stat"><b>@ViewBag.PdfCount</b><span>Study PDFs</span></div>
+    <div class="stat"><b>@(user?.ClassLevel ?? "—")</b><span>Your Class</span></div>
+    <div class="stat"><b>@(user?.Batch?.Year.ToString() ?? "—")</b><span>Batch Year</span></div>
+</div>
+
+<div class="qa-grid">
+    <a href="/student/classroom" class="qa"><span class="ic">🎬</span><div><b>Classroom</b><span>Watch your class videos & chat</span></div></a>
+    <a href="/student/videos" class="qa"><span class="ic">▶️</span><div><b>Video Lectures</b><span>All classes, filter by topic</span></div></a>
+    <a href="/student/study-material" class="qa"><span class="ic">📚</span><div><b>Study Material</b><span>Download notes & PDFs</span></div></a>
+    <a href="/student/profile" class="qa"><span class="ic">⚙️</span><div><b>My Profile</b><span>Set batch & class</span></div></a>
+</div>

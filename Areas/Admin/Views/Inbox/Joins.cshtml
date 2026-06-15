@@ -1,0 +1,45 @@
+@model List<JoinRequest>
+<div class="panel">
+    <div class="panel-head"><h2>Join Requests (@Model.Count)</h2></div>
+    <div class="panel-body">
+        @if (Model.Count == 0) { <p class="muted">No enquiries yet.</p> }
+        else
+        {
+            <div class="tbl-wrap">
+                <table class="tbl">
+                    <thead><tr><th>Name</th><th>Contact</th><th>Course</th><th>Message</th><th>When</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody>
+                    @foreach (var j in Model)
+                    {
+                        <tr>
+                            <td>@j.Name</td>
+                            <td>📞 @j.Phone @if (!string.IsNullOrEmpty(j.Email)) { <br><small class="muted">@j.Email</small> }</td>
+                            <td>@j.CourseName</td>
+                            <td><small class="muted">@j.Message</small></td>
+                            <td>@j.CreatedAt.ToString("dd MMM, HH:mm")</td>
+                            <td><span class="pill @(j.Status == "new" ? "on" : "off")">@j.Status</span></td>
+                            <td>
+                                <div class="row-actions">
+                                    <form method="post" action="/admin/joins/status/@j.Id" class="flex gap-sm">
+                                        @Html.AntiForgeryToken()
+                                        <select name="status" class="form-control" onchange="this.form.submit()">
+                                            <option value="new" selected="@(j.Status=="new")">New</option>
+                                            <option value="contacted" selected="@(j.Status=="contacted")">Contacted</option>
+                                            <option value="enrolled" selected="@(j.Status=="enrolled")">Enrolled</option>
+                                            <option value="closed" selected="@(j.Status=="closed")">Closed</option>
+                                        </select>
+                                    </form>
+                                    <form method="post" action="/admin/joins/delete/@j.Id" data-confirm="Delete this request?">
+                                        @Html.AntiForgeryToken()
+                                        <button class="btn btn-danger btn-sm">✕</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

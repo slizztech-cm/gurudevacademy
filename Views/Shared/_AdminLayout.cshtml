@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? "Admin — Gurudev Defence Academy")</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="~/img/logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+@{
+    var p = Context.Request.Path.Value?.ToLower() ?? "";
+    string A(string seg) => p.Contains(seg) ? "active" : "";
+    var adminName = Context.Session.GetString("admin_name") ?? "Admin";
+}
+<div class="admin-mob-bar">
+    <span><b>🎖️ Admin Panel</b></span>
+    <button onclick="document.getElementById('adminSide').classList.toggle('open');document.getElementById('admOverlay').classList.toggle('open')">☰</button>
+</div>
+<div class="admin-overlay" id="admOverlay" onclick="document.getElementById('adminSide').classList.remove('open');this.classList.remove('open')"></div>
+<div class="admin-shell">
+    <aside class="admin-side" id="adminSide">
+        <div class="admin-brand">
+            <img src="~/img/logo.svg" alt="logo" />
+            <div><b>Gurudev</b><span>ADMIN</span></div>
+        </div>
+        <nav class="admin-menu">
+            <a href="/admin/dashboard" class="@A("dashboard")">📊 Dashboard</a>
+            <div class="grp">Academics</div>
+            <a href="/admin/categories" class="@A("categories")">🗂️ Course Categories</a>
+            <a href="/admin/courses" class="@A("courses")">🎯 Courses</a>
+            <a href="/admin/batches" class="@A("batches")">👥 Batches</a>
+            <a href="/admin/videos" class="@A("/videos")">🎬 Class Videos</a>
+            <a href="/admin/study" class="@A("study")">📚 Study PDFs</a>
+            <div class="grp">Enquiries</div>
+            <a href="/admin/joins" class="@A("joins")">📝 Join Requests</a>
+            <a href="/admin/messages" class="@A("messages")">✉️ Contact Messages</a>
+            <a href="/admin/students" class="@A("students")">🎓 Students</a>
+        </nav>
+        <div class="logout">
+            <a href="/admin/logout" class="btn btn-ghost btn-sm btn-block">Logout (@adminName)</a>
+        </div>
+    </aside>
+    <div class="admin-main">
+        <div class="admin-top">
+            <h1>@(ViewData["Heading"] ?? ViewData["Title"] ?? "Dashboard")</h1>
+            <a href="/" class="btn btn-ghost btn-sm" target="_blank">View Site ↗</a>
+        </div>
+        <div class="admin-body">
+            @if (TempData["Ok"] is string okMsg)
+            {
+                <div class="alert alert-ok">@okMsg</div>
+            }
+            @if (TempData["Err"] is string errMsg)
+            {
+                <div class="alert alert-err">@errMsg</div>
+            }
+            @RenderBody()
+        </div>
+    </div>
+</div>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

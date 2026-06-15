@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? "Gurudev Defence Academy — Raebareli")</title>
+    <meta name="description" content="@(ViewData["MetaDescription"] ?? "Gurudev Defence Academy, Raebareli — coaching for Agniveer, Airforce & other defence exams plus Class 9-12 Physics, Chemistry, Maths & English.")" />
+    <link rel="icon" type="image/svg+xml" href="~/img/logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    @await Html.PartialAsync("_Navbar")
+    <main>
+        @RenderBody()
+    </main>
+    @await Html.PartialAsync("_Footer")
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

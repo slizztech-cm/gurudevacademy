@@ -1,0 +1,49 @@
+@model LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Admin Login — Gurudev Defence Academy";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>@ViewData["Title"]</title>
+    <link rel="icon" type="image/svg+xml" href="~/img/logo.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="auth-wrap" style="min-height:100vh">
+        <div style="width:100%;max-width:400px">
+            <div class="auth-logo">
+                <img src="~/img/logo.svg" alt="logo" />
+                <h1>Admin Panel</h1>
+                <p>Gurudev Defence Academy</p>
+            </div>
+            <form method="post" action="/admin/login" class="form-card">
+                @Html.AntiForgeryToken()
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-err">@Html.ValidationSummary(true)</div>
+                }
+                <div class="form-group">
+                    <label>Admin Email</label>
+                    <input asp-for="Email" class="form-control" autocomplete="username" />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="pw-wrap">
+                        <input asp-for="Password" id="apw" class="form-control" autocomplete="current-password" />
+                        <button type="button" class="pw-toggle" data-pw-toggle="apw">👁</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign In →</button>
+            </form>
+            <p class="auth-alt"><a href="/">← Back to site</a></p>
+        </div>
+    </div>
+    <script src="~/js/site.js"></script>
+</body>
+</html>

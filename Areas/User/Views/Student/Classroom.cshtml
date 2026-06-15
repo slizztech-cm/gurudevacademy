@@ -1,0 +1,165 @@
+@{
+    var user = ViewBag.User as AppUser;
+    var videos = ViewBag.Videos as List<YoutubeVideo> ?? new();
+    var batchId = user?.BatchId ?? 0;
+
+    // Convert a YouTube link/id into an embeddable video id (or null if not a single video).
+    string? EmbedId(string r)
+    {
+        if (string.IsNullOrWhiteSpace(r)) return null;
+        r = r.Trim();
+        if (r.Contains("watch?v="))
+        {
+            var id = r.Split("watch?v=")[1].Split('&')[0];
+            return id.Length >= 8 ? id : null;
+        }
+        if (r.Contains("youtu.be/"))
+        {
+            var id = r.Split("youtu.be/")[1].Split('?')[0].Split('/')[0];
+            return id.Length >= 8 ? id : null;
+        }
+        if (r.Contains("/embed/"))
+        {
+            var id = r.Split("/embed/")[1].Split('?')[0];
+            return id.Length >= 8 ? id : null;
+        }
+        // bare id (no slashes, no channel "@")
+        if (!r.Contains('/') && !r.Contains('@') && r.Length is >= 8 and <= 20) return r;
+        return null;
+    }
+}
+
+<div class="dash-hero">
+    <div>
+        <h1>🎬 My Classroom</h1>
+        <p>@(user?.Batch is not null ? $"Batch: {user.Batch.Name}" : "No batch assigned yet")</p>
+    </div>
+</div>
+
+@if (user?.BatchId is null)
+{
+    <div class="card locked">
+        <span class="ic">🔒</span>
+        <h3>You're not in a batch yet</h3>
+        <p class="muted">Set your batch in your profile, or ask the academy to assign you. Your class videos and batch chat will appear here.</p>
+        <a href="/student/profile" class="btn btn-primary mt">Go to Profile →</a>
+    </div>
+}
+else
+{
+    <div class="classroom">
+        <!-- VIDEOS -->
+        <div>
+            @if (videos.Count == 0)
+            {
+                <div class="card empty"><span class="ic">🎬</span><p>No class videos added yet. Check back soon!</p></div>
+            }
+            else
+            {
+                foreach (var v in videos)
+                {
+                    var id = EmbedId(v.YoutubeRef);
+                    <div class="video-card">
+                        @if (id is not null)
+                        {
+                            <div class="video-frame">
+                                <iframe src="https://www.youtube-nocookie.com/embed/@id" title="@v.Title"
+                                        loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen></iframe>
+                            </div>
+                        }
+                        <div class="video-meta">
+                            <h3>@v.Title</h3>
+                            <div class="sub">
+                                @if (!string.IsNullOrEmpty(v.Subject)) { <span class="chip">@v.Subject</span> }
+                                @if (id is null) { <a href="@v.YoutubeRef" target="_blank" class="text-gold">▶ Watch on YouTube</a> }
+                            </div>
+                            @if (!string.IsNullOrEmpty(v.Description)) { <p class="muted mt">@v.Description</p> }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- BATCH CHAT -->
+        <div>
+            <div class="chat-box">
+                <div class="chat-head">
+                    <span class="dot"></span><b>Batch Chat</b><span>@user.Batch?.Name</span>
+                </div>
+                <div class="chat-msgs" id="chatMsgs">
+                    <div class="chat-empty">Loading messages…</div>
+                </div>
+                <div class="chat-foot">
+                    <input id="chatInput" placeholder="Message your batch…" maxlength="1000" autocomplete="off" />
+                    <button id="chatSend" title="Send">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.AntiForgeryToken()
+    <script>
+    (function () {
+        const batchId = @batchId;
+        const myId = @(user!.Id);
+        const msgsEl = document.getElementById('chatMsgs');
+        const input  = document.getElementById('chatInput');
+        const sendBtn= document.getElementById('chatSend');
+        const token  = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        let lastTicks = 0;
+        const seen = new Set();
+
+        function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+        function fmt(iso){try{return new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}catch{return '';}}
+
+        function render(m){
+            if (seen.has(m.id)) return;
+            seen.add(m.id);
+            const empty = msgsEl.querySelector('.chat-empty'); if (empty) empty.remove();
+            const mine = m.userId === myId;
+            const wrap = document.createElement('div');
+            wrap.className = 'cmsg' + (mine ? ' mine' : '');
+            wrap.innerHTML = `<div class="who">${mine ? 'You' : esc(m.name)}</div>`+
+                             `<div class="bubble">${esc(m.text)}</div>`+
+                             `<div class="time">${fmt(m.at)}</div>`;
+            msgsEl.appendChild(wrap);
+        }
+        function scrollBottom(){ msgsEl.scrollTop = msgsEl.scrollHeight; }
+
+        async function load(){
+            try{
+                const r = await fetch(`/student/chat/${batchId}?since=${lastTicks}`);
+                if(!r.ok) return;
+                const arr = await r.json();
+                if(arr.length){
+                    const atBottom = msgsEl.scrollHeight - msgsEl.scrollTop - msgsEl.clientHeight < 100;
+                    arr.forEach(render);
+                    lastTicks = arr[arr.length-1].ticks;
+                    if(atBottom) scrollBottom();
+                } else if (!msgsEl.children.length || msgsEl.querySelector('.chat-empty')) {
+                    if(lastTicks===0 && !seen.size){ msgsEl.innerHTML = '<div class="chat-empty">No messages yet — say hello! 👋</div>'; }
+                }
+            }catch{}
+        }
+        async function send(){
+            const text = input.value.trim();
+            if(!text) return;
+            input.value=''; sendBtn.disabled=true;
+            try{
+                const r = await fetch(`/student/chat/${batchId}`,{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json','RequestVerificationToken':token},
+                    body: JSON.stringify({ text })
+                });
+                if(r.ok){ const m = await r.json(); render(m); lastTicks=m.ticks; scrollBottom(); }
+                else { const e=await r.json().catch(()=>({})); if(e.error) alert(e.error); input.value=text; }
+            }catch{ input.value=text; }
+            sendBtn.disabled=false; input.focus();
+        }
+        sendBtn.addEventListener('click', send);
+        input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); }});
+        load(); setInterval(load, 4000);
+    })();
+    </script>
+}

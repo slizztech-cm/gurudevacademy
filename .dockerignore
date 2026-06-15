@@ -1,0 +1,13 @@
+bin/
+obj/
+.git/
+.vs/
+.vscode/
+.idea/
+.claude/
+appsettings.Local.json
+*.Local.json
+.env
+**/node_modules/
+Dockerfile
+.dockerignore

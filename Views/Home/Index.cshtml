@@ -1,0 +1,96 @@
+@{
+    ViewData["Title"] = "Gurudev Defence Academy, Raebareli — Agniveer, Airforce & School Coaching";
+    var categories = ViewBag.Categories as List<CourseCategory> ?? new();
+}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-grid">
+            <div>
+                <span class="hero-badge">🎖️ Raebareli's trusted defence coaching</span>
+                <h1>Crack <span class="g">Agniveer & Airforce</span> with discipline and the right guidance.</h1>
+                <p>
+                    Expert coaching for Agniveer, Indian Airforce and other defence exams —
+                    plus strong Class 9–12 foundation in Physics, Chemistry, Maths & English.
+                    Recorded classes, study material and a supportive batch community.
+                </p>
+                <div class="hero-cta">
+                    <a href="/join" class="btn btn-gold">📝 Join a Course</a>
+                    <a href="/courses" class="btn btn-ghost">Explore Courses</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat"><b>500+</b><span>Students Trained</span></div>
+                    <div class="hero-stat"><b>6+</b><span>Programs</span></div>
+                    <div class="hero-stat"><b>PCM+E</b><span>Class 9–12</span></div>
+                </div>
+            </div>
+            <div class="hero-art">
+                <img src="~/img/logo.svg" alt="Gurudev Defence Academy" width="300" height="300" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHY US -->
+<section style="background:var(--navy2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="container">
+        <div class="sec-head">
+            <span class="chip">Why Gurudev</span>
+            <h2>Everything you need to succeed</h2>
+            <p>From day-one discipline to exam-day confidence — we've got your preparation covered.</p>
+        </div>
+        <div class="grid grid-4">
+            <div class="card feature"><span class="ic">🎯</span><div><h4>Focused Coaching</h4><p>Exam-oriented teaching for Agniveer, Airforce and defence entrances.</p></div></div>
+            <div class="card feature"><span class="ic">🎬</span><div><h4>Recorded Classes</h4><p>Revisit lessons anytime through your personal student classroom.</p></div></div>
+            <div class="card feature"><span class="ic">📚</span><div><h4>Study Material</h4><p>Downloadable notes & PDFs for every subject and exam.</p></div></div>
+            <div class="card feature"><span class="ic">👥</span><div><h4>Batch Community</h4><p>Chat and learn together with your own batchmates.</p></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- COURSES -->
+<section>
+    <div class="container">
+        <div class="sec-head">
+            <span class="chip">Our Programs</span>
+            <h2>Courses we offer</h2>
+            <p>Choose the track that matches your goal.</p>
+        </div>
+        @foreach (var cat in categories)
+        {
+            <h3 style="margin:1.4rem 0 .9rem">@cat.Icon @cat.Name</h3>
+            <div class="grid grid-3">
+                @foreach (var c in cat.Courses.Where(x => x.IsActive))
+                {
+                    <div class="card course-card">
+                        <span class="ic">@c.Icon</span>
+                        <h3>@c.Name</h3>
+                        <p>@c.Description</p>
+                        <div class="course-meta">
+                            @if (!string.IsNullOrEmpty(c.DurationText)) { <span class="chip">⏱️ @c.DurationText</span> }
+                            @if (c.Fees is > 0) { <span class="chip badge-new">₹@c.Fees</span> }
+                        </div>
+                        <a href="/join?course=@Uri.EscapeDataString(c.Name)" class="btn btn-primary btn-sm mt">Enquire →</a>
+                    </div>
+                }
+            </div>
+        }
+        @if (categories.Count == 0)
+        {
+            <p class="muted center">Courses will appear here soon.</p>
+        }
+    </div>
+</section>
+
+<!-- CTA -->
+<section style="background:linear-gradient(135deg,var(--blue-d),var(--olive-d))">
+    <div class="container center">
+        <h2>Ready to begin your journey?</h2>
+        <p class="mt" style="color:rgba(255,255,255,.8)">Join Gurudev Defence Academy today and train with discipline, dedication and direction.</p>
+        <div class="hero-cta mt2" style="justify-content:center">
+            <a href="/join" class="btn btn-gold">📝 Join Now</a>
+            <a href="/contact" class="btn btn-ghost">Contact Us</a>
+        </div>
+    </div>
+</section>

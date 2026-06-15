@@ -1,0 +1,82 @@
+@model List<Course>
+@{
+    var cats = ViewBag.Categories as List<CourseCategory> ?? new();
+}
+<div class="panel">
+    <div class="panel-head"><h2>➕ Add Course</h2></div>
+    <div class="panel-body">
+        <form method="post" action="/admin/courses/create" class="adm-form">
+            @Html.AntiForgeryToken()
+            <div class="row2">
+                <div class="form-group"><label>Name *</label><input name="Name" class="form-control" required /></div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select name="CategoryId" class="form-control" required>
+                        <option value="">— Select —</option>
+                        @foreach (var c in cats) { <option value="@c.Id">@c.Icon @c.Name</option> }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group"><label>Description</label><input name="Description" class="form-control" /></div>
+            <div class="row2">
+                <div class="form-group"><label>Icon</label><input name="Icon" class="form-control" placeholder="🎯" /></div>
+                <div class="form-group"><label>Duration</label><input name="DurationText" class="form-control" placeholder="6 months" /></div>
+            </div>
+            <div class="row2">
+                <div class="form-group"><label>Fees (₹)</label><input name="Fees" type="number" step="0.01" class="form-control" /></div>
+                <div class="form-group"><label>Display Order</label><input name="DisplayOrder" type="number" value="0" class="form-control" /></div>
+            </div>
+            <label><input type="checkbox" name="IsActive" value="true" checked /> Active</label>
+            <button class="btn btn-primary">Add Course</button>
+        </form>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><h2>All Courses (@Model.Count)</h2></div>
+    <div class="panel-body">
+        <div class="tbl-wrap">
+            <table class="tbl">
+                <thead><tr><th>Course</th><th>Category</th><th>Duration</th><th>Fees</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td>@c.Icon @c.Name</td>
+                        <td>@(c.Category?.Name)</td>
+                        <td>@c.DurationText</td>
+                        <td>@(c.Fees is > 0 ? $"₹{c.Fees}" : "—")</td>
+                        <td><span class="pill @(c.IsActive ? "on" : "off")">@(c.IsActive ? "Active" : "Hidden")</span></td>
+                        <td>
+                            <div class="row-actions">
+                                <details>
+                                    <summary class="btn btn-ghost btn-sm">Edit</summary>
+                                    <form method="post" action="/admin/courses/update" class="adm-form" style="margin-top:.6rem;min-width:240px">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="Id" value="@c.Id" />
+                                        <input name="Name" class="form-control" value="@c.Name" />
+                                        <select name="CategoryId" class="form-control">
+                                            @foreach (var cat in cats) { <option value="@cat.Id" selected="@(cat.Id == c.CategoryId)">@cat.Name</option> }
+                                        </select>
+                                        <input name="Description" class="form-control" value="@c.Description" />
+                                        <input name="Icon" class="form-control" value="@c.Icon" />
+                                        <input name="DurationText" class="form-control" value="@c.DurationText" />
+                                        <input name="Fees" type="number" step="0.01" class="form-control" value="@c.Fees" />
+                                        <input name="DisplayOrder" type="number" class="form-control" value="@c.DisplayOrder" />
+                                        <label><input type="checkbox" name="IsActive" value="true" checked="@c.IsActive" /> Active</label>
+                                        <button class="btn btn-primary btn-sm">Save</button>
+                                    </form>
+                                </details>
+                                <form method="post" action="/admin/courses/delete/@c.Id" data-confirm="Delete this course?">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

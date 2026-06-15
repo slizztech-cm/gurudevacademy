@@ -1,0 +1,45 @@
+@model List<AppUser>
+@{
+    var batches = ViewBag.Batches as List<Batch> ?? new();
+}
+<div class="panel">
+    <div class="panel-head"><h2>Students (@Model.Count)</h2></div>
+    <div class="panel-body">
+        @if (Model.Count == 0) { <p class="muted">No students registered yet.</p> }
+        else
+        {
+            <div class="tbl-wrap">
+                <table class="tbl">
+                    <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Class</th><th>Batch</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr>
+                            <td>@u.Name</td>
+                            <td><small class="muted">@u.Email</small></td>
+                            <td>@u.Phone</td>
+                            <td>@u.ClassLevel</td>
+                            <td>
+                                <form method="post" action="/admin/students/assign/@u.Id">
+                                    @Html.AntiForgeryToken()
+                                    <select name="batchId" class="form-control" onchange="this.form.submit()">
+                                        <option value="">— None —</option>
+                                        @foreach (var b in batches) { <option value="@b.Id" selected="@(b.Id == u.BatchId)">@b.Name</option> }
+                                    </select>
+                                </form>
+                            </td>
+                            <td><span class="pill @(u.IsActive ? "on" : "off")">@(u.IsActive ? "Active" : "Blocked")</span></td>
+                            <td>
+                                <form method="post" action="/admin/students/toggle/@u.Id">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-ghost btn-sm">@(u.IsActive ? "Block" : "Unblock")</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

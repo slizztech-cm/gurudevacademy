@@ -1,0 +1,64 @@
+@model List<Batch>
+<div class="panel">
+    <div class="panel-head"><h2>➕ Create Batch</h2></div>
+    <div class="panel-body">
+        <form method="post" action="/admin/batches/create" class="adm-form">
+            @Html.AntiForgeryToken()
+            <div class="row2">
+                <div class="form-group"><label>Batch Name *</label><input name="Name" class="form-control" placeholder="Agniveer 2026 Morning" required /></div>
+                <div class="form-group"><label>Class Level</label><input name="ClassLevel" class="form-control" placeholder="Agniveer / Class 11" /></div>
+            </div>
+            <div class="row2">
+                <div class="form-group"><label>Year</label><input name="Year" type="number" value="@DateTime.Now.Year" class="form-control" /></div>
+                <div class="form-group" style="display:flex;align-items:flex-end"><label style="margin:0"><input type="checkbox" name="IsActive" value="true" checked /> Active</label></div>
+            </div>
+            <div class="form-group"><label>Description</label><input name="Description" class="form-control" /></div>
+            <button class="btn btn-primary">Create Batch</button>
+        </form>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><h2>All Batches (@Model.Count)</h2></div>
+    <div class="panel-body">
+        <div class="tbl-wrap">
+            <table class="tbl">
+                <thead><tr><th>Name</th><th>Class</th><th>Year</th><th>Students</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                @foreach (var b in Model)
+                {
+                    <tr>
+                        <td>@b.Name<br><small class="muted">@b.Description</small></td>
+                        <td>@b.ClassLevel</td>
+                        <td>@b.Year</td>
+                        <td>@b.Students.Count</td>
+                        <td><span class="pill @(b.IsActive ? "on" : "off")">@(b.IsActive ? "Active" : "Hidden")</span></td>
+                        <td>
+                            <div class="row-actions">
+                                <a href="/admin/videos?batchId=@b.Id" class="btn btn-ghost btn-sm">🎬 Videos</a>
+                                <details>
+                                    <summary class="btn btn-ghost btn-sm">Edit</summary>
+                                    <form method="post" action="/admin/batches/update" class="adm-form" style="margin-top:.6rem;min-width:240px">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="Id" value="@b.Id" />
+                                        <input name="Name" class="form-control" value="@b.Name" />
+                                        <input name="ClassLevel" class="form-control" value="@b.ClassLevel" />
+                                        <input name="Year" type="number" class="form-control" value="@b.Year" />
+                                        <input name="Description" class="form-control" value="@b.Description" />
+                                        <label><input type="checkbox" name="IsActive" value="true" checked="@b.IsActive" /> Active</label>
+                                        <button class="btn btn-primary btn-sm">Save</button>
+                                    </form>
+                                </details>
+                                <form method="post" action="/admin/batches/delete/@b.Id" data-confirm="Delete this batch?">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Create Account — Gurudev Defence Academy";
+}
+<div class="auth-wrap">
+    <div style="width:100%;max-width:440px">
+        <div class="auth-logo">
+            <img src="~/img/logo.svg" alt="logo" />
+            <h1>Create your account</h1>
+            <p>We'll email you a code to verify</p>
+        </div>
+        <form method="post" action="/account/register" class="form-card">
+            @Html.AntiForgeryToken()
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-err">@Html.ValidationSummary(true)</div>
+            }
+            <div class="form-group">
+                <label>Full Name</label>
+                <input asp-for="Name" class="form-control" placeholder="Your name" />
+                <span asp-validation-for="Name" class="field-err"></span>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input asp-for="Email" class="form-control" placeholder="you@email.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="field-err"></span>
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input asp-for="Phone" class="form-control" placeholder="optional" />
+                <span asp-validation-for="Phone" class="field-err"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="pw-wrap">
+                        <input asp-for="Password" id="pw1" class="form-control" placeholder="min 6 chars" autocomplete="new-password" />
+                        <button type="button" class="pw-toggle" data-pw-toggle="pw1">👁</button>
+                    </div>
+                    <span asp-validation-for="Password" class="field-err"></span>
+                </div>
+                <div class="form-group">
+                    <label>Confirm</label>
+                    <div class="pw-wrap">
+                        <input asp-for="ConfirmPassword" id="pw2" class="form-control" placeholder="repeat" autocomplete="new-password" />
+                        <button type="button" class="pw-toggle" data-pw-toggle="pw2">👁</button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="field-err"></span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-gold btn-block">Continue →</button>
+        </form>
+        <p class="auth-alt">Already have an account? <a href="/account/login">Sign in</a></p>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,38 @@
+# ===== Secrets (NEVER commit) =====
+# Real keys live here locally; on Render set them as environment variables instead.
+appsettings.Local.json
+*.Local.json
+.env
+
+# ===== .NET build output =====
+bin/
+obj/
+out/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+project.lock.json
+artifacts/
+
+# ===== EF / tooling =====
+*.dbmdl
+
+# ===== IDE / tooling =====
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.claude/
+
+# ===== Logs =====
+applog*.txt
+*.log
+
+# ===== OS =====
+Thumbs.db
+.DS_Store
+
+# ===== Uploaded content (user PDFs) — keep the folder, ignore contents =====
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep

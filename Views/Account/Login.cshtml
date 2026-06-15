@@ -1,0 +1,50 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login — Gurudev Defence Academy";
+    var errType = ViewBag.ErrorType as string;
+}
+<div class="auth-wrap">
+    <div style="width:100%;max-width:420px">
+        <div class="auth-logo">
+            <img src="~/img/logo.svg" alt="logo" />
+            <h1>Welcome back</h1>
+            <p>Sign in to your student account</p>
+        </div>
+        <form method="post" action="/account/login" class="form-card">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReturnUrl" />
+            @if (!ViewData.ModelState.IsValid)
+            {
+                if (errType == "no_account")
+                {
+                    <div class="alert alert-err">📭 No account found with this email. <a href="/account/register" class="text-gold">Create one →</a></div>
+                }
+                else if (errType == "wrong_password")
+                {
+                    <div class="alert alert-err">🔑 Incorrect password. Please try again.</div>
+                }
+                else
+                {
+                    <div class="alert alert-err">@Html.ValidationSummary(true)</div>
+                }
+            }
+            <div class="form-group">
+                <label>Email</label>
+                <input asp-for="Email" class="form-control" placeholder="you@email.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="field-err"></span>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="pw-wrap">
+                    <input asp-for="Password" id="pw" class="form-control" placeholder="••••••••" autocomplete="current-password" />
+                    <button type="button" class="pw-toggle" data-pw-toggle="pw">👁</button>
+                </div>
+                <span asp-validation-for="Password" class="field-err"></span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign In →</button>
+        </form>
+        <p class="auth-alt">New here? <a href="/account/register">Create an account</a></p>
+        <p class="auth-alt"><a href="/">← Back to home</a></p>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

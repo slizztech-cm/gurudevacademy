@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="Gurudev Defence Academy">
+  <defs>
+    <linearGradient id="gShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e6fd0"/>
+      <stop offset="1" stop-color="#0b3a7a"/>
+    </linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe07a"/>
+      <stop offset="1" stop-color="#e0a020"/>
+    </linearGradient>
+    <linearGradient id="gOlive" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3f8f4a"/>
+      <stop offset="1" stop-color="#1f5a2a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer ring -->
+  <circle cx="120" cy="120" r="116" fill="#0a1628" stroke="url(#gGold)" stroke-width="5"/>
+  <circle cx="120" cy="120" r="104" fill="none" stroke="#13335c" stroke-width="2"/>
+
+  <!-- Shield -->
+  <path d="M120 36 L186 60 V120 C186 168 156 196 120 208 C84 196 54 168 54 120 V60 Z"
+        fill="url(#gShield)" stroke="url(#gGold)" stroke-width="3"/>
+
+  <!-- Olive wreath left -->
+  <path d="M78 150 C58 140 56 112 70 92 C62 116 70 138 86 146 Z" fill="url(#gOlive)"/>
+  <path d="M82 168 C64 160 60 136 72 118 C66 140 76 158 90 162 Z" fill="url(#gOlive)"/>
+  <!-- Olive wreath right -->
+  <path d="M162 150 C182 140 184 112 170 92 C178 116 170 138 154 146 Z" fill="url(#gOlive)"/>
+  <path d="M158 168 C176 160 180 136 168 118 C174 140 164 158 150 162 Z" fill="url(#gOlive)"/>
+
+  <!-- Crossed swords -->
+  <g stroke="url(#gGold)" stroke-width="4" stroke-linecap="round">
+    <line x1="92" y1="86" x2="150" y2="150"/>
+    <line x1="148" y1="86" x2="90" y2="150"/>
+  </g>
+  <circle cx="92" cy="86" r="5" fill="url(#gGold)"/>
+  <circle cx="148" cy="86" r="5" fill="url(#gGold)"/>
+
+  <!-- Star -->
+  <path d="M120 70 l6.5 13.5 14.8 2 -10.7 10.4 2.5 14.7 -13.1 -6.9 -13.1 6.9 2.5 -14.7 -10.7 -10.4 14.8 -2 Z"
+        fill="url(#gGold)"/>
+
+  <!-- Banner -->
+  <rect x="56" y="176" width="128" height="26" rx="6" fill="#0a1628" stroke="url(#gGold)" stroke-width="2"/>
+  <text x="120" y="194" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif"
+        font-size="13" font-weight="700" fill="#ffe07a" letter-spacing="1">GURUDEV</text>
+</svg>

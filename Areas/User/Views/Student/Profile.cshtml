@@ -1,0 +1,55 @@
+@model ProfileViewModel
+@{
+    var batches = ViewBag.Batches as List<Batch> ?? new();
+    var classes = new[] { "Class 9", "Class 10", "Class 11", "Class 12", "Agniveer", "Airforce", "Navy / Other" };
+    var initial = string.IsNullOrEmpty(Model.Name) ? "S" : Model.Name.Trim()[..1].ToUpper();
+}
+<div class="dash-hero"><div><h1>⚙️ My Profile</h1><p>Keep your batch and class up to date.</p></div></div>
+
+@if (TempData["Ok"] is string ok) { <div class="alert alert-ok">@ok</div> }
+
+<div class="profile-grid">
+    <div class="profile-card">
+        <div class="avatar">@initial</div>
+        <h3>@Model.Name</h3>
+        <div class="em">@Model.Email</div>
+        @if (!string.IsNullOrEmpty(Model.ClassLevel)) { <div class="chip mt">@Model.ClassLevel</div> }
+    </div>
+
+    <div class="card">
+        <form method="post" action="/student/profile" class="adm-form">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label>Full Name</label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="row2">
+                <div class="form-group">
+                    <label>Email (read-only)</label>
+                    <input class="form-control" value="@Model.Email" disabled />
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input asp-for="Phone" class="form-control" />
+                </div>
+            </div>
+            <div class="row2">
+                <div class="form-group">
+                    <label>Class / Track</label>
+                    <select asp-for="ClassLevel" class="form-control">
+                        <option value="">— Select —</option>
+                        @foreach (var c in classes) { <option value="@c" selected="@(Model.ClassLevel == c)">@c</option> }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Batch</label>
+                    <select asp-for="BatchId" class="form-control">
+                        <option value="">— Not assigned —</option>
+                        @foreach (var b in batches) { <option value="@b.Id" selected="@(Model.BatchId == b.Id)">@b.Name</option> }
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+@model ContactViewModel
+@{
+    var addr  = ViewBag.Address as string;
+    var email = ViewBag.Email as string;
+    var phone = ViewBag.Phone as string;
+}
+<section class="hero" style="padding:3rem 0">
+    <div class="container center">
+        <span class="hero-badge">💬 Get in touch</span>
+        <h1>Contact Us</h1>
+        <p style="margin:1rem auto 0">Questions about admissions, batches or fees? We're here to help.</p>
+    </div>
+</section>
+
+<section style="padding-top:1rem">
+    <div class="container">
+        <div class="grid grid-2" style="align-items:start">
+            <div class="card">
+                <h3>📍 Visit / Reach Us</h3>
+                <p class="muted mt">@addr</p>
+                @if (!string.IsNullOrWhiteSpace(phone)) { <p class="mt">📞 <b>@phone</b></p> }
+                @if (!string.IsNullOrWhiteSpace(email)) { <p class="mt">✉️ <b>@email</b></p> }
+                <div class="mt2">
+                    <span class="chip">Agniveer</span>
+                    <span class="chip">Airforce</span>
+                    <span class="chip">Class 9–12 PCM + English</span>
+                </div>
+            </div>
+
+            <div>
+                @if (TempData["Ok"] is string ok) { <div class="alert alert-ok">@ok</div> }
+                <form method="post" action="/contact" class="card">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="field-err"></span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="field-err"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input asp-for="Phone" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input asp-for="Subject" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Message *</label>
+                        <textarea asp-for="Message" class="form-control"></textarea>
+                        <span asp-validation-for="Message" class="field-err"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Send Message →</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,32 @@
+@model List<ContactMessage>
+<div class="panel">
+    <div class="panel-head"><h2>Contact Messages (@Model.Count)</h2></div>
+    <div class="panel-body">
+        @if (Model.Count == 0) { <p class="muted">No messages yet.</p> }
+        else
+        {
+            <div class="tbl-wrap">
+                <table class="tbl">
+                    <thead><tr><th>From</th><th>Subject</th><th>Message</th><th>When</th><th>Action</th></tr></thead>
+                    <tbody>
+                    @foreach (var m in Model)
+                    {
+                        <tr>
+                            <td>@m.Name<br><small class="muted">@m.Email @(string.IsNullOrEmpty(m.Phone) ? "" : $"· {m.Phone}")</small></td>
+                            <td>@m.Subject</td>
+                            <td><small class="muted">@m.Message</small></td>
+                            <td>@m.CreatedAt.ToString("dd MMM, HH:mm")</td>
+                            <td>
+                                <form method="post" action="/admin/messages/delete/@m.Id" data-confirm="Delete this message?">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

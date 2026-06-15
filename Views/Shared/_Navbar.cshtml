@@ -1,0 +1,35 @@
+@{
+    var path = Context.Request.Path.Value?.ToLower() ?? "/";
+    bool IsActive(string p) => path == p || (p != "/" && path.StartsWith(p));
+    var loggedIn = Context.Session.GetString("user_email") != null;
+}
+<nav class="nav" id="mainNav">
+    <div class="nav-inner">
+        <a class="brand" href="/">
+            <img src="~/img/logo.svg" alt="Gurudev Defence Academy logo" />
+            <span class="brand-txt">
+                <b>GURUDEV</b>
+                <span>DEFENCE ACADEMY</span>
+            </span>
+        </a>
+        <button class="nav-toggle" onclick="document.getElementById('mainNav').classList.toggle('open')" aria-label="Menu">☰</button>
+        <div class="nav-links">
+            <a href="/" class="@(IsActive("/") && path=="/" ? "active":"")">Home</a>
+            <a href="/courses" class="@(IsActive("/courses") ? "active":"")">Courses</a>
+            <a href="/study-material" class="@(IsActive("/study-material") ? "active":"")">Study Material</a>
+            <a href="/join" class="@(IsActive("/join") ? "active":"")">Join Course</a>
+            <a href="/contact" class="@(IsActive("/contact") ? "active":"")">Contact</a>
+        </div>
+        <div class="nav-cta">
+            @if (loggedIn)
+            {
+                <a href="/student/dashboard" class="btn btn-gold btn-sm">My Dashboard</a>
+            }
+            else
+            {
+                <a href="/account/login" class="btn btn-ghost btn-sm">Login</a>
+                <a href="/account/register" class="btn btn-primary btn-sm">Register</a>
+            }
+        </div>
+    </div>
+</nav>

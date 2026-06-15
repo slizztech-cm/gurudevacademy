@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? "Student Dashboard — Gurudev Defence Academy")</title>
+    <link rel="icon" type="image/svg+xml" href="~/img/logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    @{
+        var p = Context.Request.Path.Value?.ToLower() ?? "";
+        var uname = Context.Session.GetString("user_name") ?? "Student";
+        var initial = string.IsNullOrEmpty(uname) ? "S" : uname.Trim()[..1].ToUpper();
+        string Act(string seg) => p.Contains(seg) ? "active" : "";
+    }
+    <nav class="dash-nav" id="dashNav">
+        <div class="nav-inner">
+            <a class="brand" href="/student/dashboard">
+                <img src="~/img/logo.svg" alt="logo" />
+                <span class="brand-txt"><b>GURUDEV</b><span>STUDENT PORTAL</span></span>
+            </a>
+            <button class="nav-toggle" onclick="document.getElementById('dashNav').classList.toggle('open')">☰</button>
+            <div class="dash-links nav-links">
+                <a href="/student/dashboard" class="@Act("dashboard")">🏠 Home</a>
+                <a href="/student/classroom" class="@Act("classroom")">🎬 Classroom</a>
+                <a href="/student/videos" class="@Act("videos")">▶️ Video Lectures</a>
+                <a href="/student/study-material" class="@Act("study-material")">📚 Study Material</a>
+                <a href="/student/profile" class="@Act("profile")">⚙️ Profile</a>
+            </div>
+            <div class="dash-user nav-cta">
+                <div class="avatar">@initial</div>
+                <a href="/account/logout" class="btn btn-ghost btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

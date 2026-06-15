@@ -1,0 +1,66 @@
+@model List<CourseCategory>
+
+<div class="panel">
+    <div class="panel-head"><h2>➕ Add Category</h2></div>
+    <div class="panel-body">
+        <form method="post" action="/admin/categories/create" class="adm-form">
+            @Html.AntiForgeryToken()
+            <div class="row2">
+                <div class="form-group"><label>Name *</label><input name="Name" class="form-control" required /></div>
+                <div class="form-group"><label>Icon (emoji)</label><input name="Icon" class="form-control" placeholder="🎖️" /></div>
+            </div>
+            <div class="form-group"><label>Description</label><input name="Description" class="form-control" /></div>
+            <div class="row2">
+                <div class="form-group"><label>Display Order</label><input name="DisplayOrder" type="number" value="0" class="form-control" /></div>
+                <div class="form-group" style="display:flex;align-items:flex-end;gap:.5rem">
+                    <label style="margin:0"><input type="checkbox" name="IsActive" value="true" checked /> Active</label>
+                </div>
+            </div>
+            <button class="btn btn-primary">Add Category</button>
+        </form>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><h2>All Categories (@Model.Count)</h2></div>
+    <div class="panel-body">
+        <div class="tbl-wrap">
+            <table class="tbl">
+                <thead><tr><th>Icon</th><th>Name</th><th>Slug</th><th>Order</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td style="font-size:1.3rem">@c.Icon</td>
+                        <td>@c.Name<br><small class="muted">@c.Description</small></td>
+                        <td><small class="muted">@c.Slug</small></td>
+                        <td>@c.DisplayOrder</td>
+                        <td><span class="pill @(c.IsActive ? "on" : "off")">@(c.IsActive ? "Active" : "Hidden")</span></td>
+                        <td>
+                            <div class="row-actions">
+                                <details>
+                                    <summary class="btn btn-ghost btn-sm">Edit</summary>
+                                    <form method="post" action="/admin/categories/update" class="adm-form" style="margin-top:.6rem;min-width:240px">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="Id" value="@c.Id" />
+                                        <input name="Name" class="form-control" value="@c.Name" />
+                                        <input name="Icon" class="form-control" value="@c.Icon" />
+                                        <input name="Description" class="form-control" value="@c.Description" />
+                                        <input name="DisplayOrder" type="number" class="form-control" value="@c.DisplayOrder" />
+                                        <label><input type="checkbox" name="IsActive" value="true" checked="@c.IsActive" /> Active</label>
+                                        <button class="btn btn-primary btn-sm">Save</button>
+                                    </form>
+                                </details>
+                                <form method="post" action="/admin/categories/delete/@c.Id" data-confirm="Delete this category and its courses?">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

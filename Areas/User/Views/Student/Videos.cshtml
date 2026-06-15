@@ -1,0 +1,137 @@
+@model List<YoutubeVideo>
+@{
+    var batches = ViewBag.Batches as List<VideoBatchFilter> ?? new();
+    var selected = ViewBag.SelectedBatch as int?;
+    var total = batches.Sum(b => b.Count);
+
+    // Convert a YouTube link/id into an embeddable video id (or null if not a single video).
+    string? EmbedId(string r)
+    {
+        if (string.IsNullOrWhiteSpace(r)) return null;
+        r = r.Trim();
+        if (r.Contains("watch?v=")) { var id = r.Split("watch?v=")[1].Split('&')[0]; return id.Length >= 8 ? id : null; }
+        if (r.Contains("youtu.be/")) { var id = r.Split("youtu.be/")[1].Split('?')[0].Split('/')[0]; return id.Length >= 8 ? id : null; }
+        if (r.Contains("/embed/")) { var id = r.Split("/embed/")[1].Split('?')[0]; return id.Length >= 8 ? id : null; }
+        if (r.Contains("/shorts/")) { var id = r.Split("/shorts/")[1].Split('?')[0].Split('/')[0]; return id.Length >= 8 ? id : null; }
+        if (!r.Contains('/') && !r.Contains('@') && r.Length is >= 8 and <= 20) return r;
+        return null;
+    }
+}
+<div class="dash-hero">
+    <div>
+        <h1>🎬 Video Lectures</h1>
+        <p>Every batch's classes in one place — pick a batch and watch right here, no need to leave the site.</p>
+    </div>
+    <a href="/student/dashboard" class="btn btn-ghost btn-sm">← Back to Dashboard</a>
+</div>
+
+@if (total == 0)
+{
+    <div class="empty">
+        <span class="ic">🎬</span>
+        <p>No video lectures available yet. Please check back soon!</p>
+    </div>
+}
+else
+{
+    <div class="vid-filters">
+        <a class="vid-chip @(selected == null ? "active" : "")" href="/student/videos">
+            All <span class="n">@total</span>
+        </a>
+        @foreach (var b in batches)
+        {
+            <a class="vid-chip @(selected == b.BatchId ? "active" : "")" href="/student/videos?batchId=@b.BatchId">
+                @b.Name <span class="n">@b.Count</span>
+            </a>
+        }
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty"><span class="ic">📭</span><p>No videos in this batch yet.</p></div>
+    }
+    else
+    {
+        <div class="vid-grid">
+            @foreach (var v in Model)
+            {
+                var id = EmbedId(v.YoutubeRef);
+                <div class="vid-item">
+                    @if (id is not null)
+                    {
+                        <button type="button" class="vid-thumb" data-id="@id" data-title="@v.Title">
+                            <img src="https://i.ytimg.com/vi/@id/mqdefault.jpg" alt="@v.Title" loading="lazy" />
+                            <span class="play"><span>▶</span></span>
+                        </button>
+                    }
+                    <div class="vid-body">
+                        <div class="meta">
+                            @if (v.Batch is not null) { <span class="chip">@v.Batch.Name</span> }
+                            @if (!string.IsNullOrEmpty(v.Subject)) { <span class="chip">@v.Subject</span> }
+                        </div>
+                        <h3>@v.Title</h3>
+                        @if (id is null)
+                        {
+                            <a href="@v.YoutubeRef" target="_blank" rel="noopener" class="vid-more">▶ Watch on YouTube</a>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(v.Description))
+                        {
+                            <button type="button" class="vid-more">Show description</button>
+                            <p class="vid-desc">@v.Description</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+<div class="vid-modal" id="vidModal">
+    <button type="button" class="close" id="vidClose" aria-label="Close">&times;</button>
+    <div class="vid-modal-inner">
+        <div class="frame"><iframe id="vidFrame" title="Video player"
+             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+             allowfullscreen></iframe></div>
+        <div class="mtitle" id="vidTitle"></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    const modal = document.getElementById('vidModal');
+    const frame = document.getElementById('vidFrame');
+    const title = document.getElementById('vidTitle');
+
+    function open(id, t) {
+        frame.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+        title.textContent = t || '';
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function close() {
+        modal.classList.remove('open');
+        frame.src = '';                      // stop playback
+        document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.vid-thumb').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            open(btn.getAttribute('data-id'), btn.getAttribute('data-title'));
+        });
+    });
+    document.getElementById('vidClose').addEventListener('click', close);
+    modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+    document.querySelectorAll('.vid-more').forEach(function (btn) {
+        if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('vid-desc')) return;
+        btn.addEventListener('click', function () {
+            const desc = btn.nextElementSibling;
+            const shown = desc.classList.toggle('open');
+            btn.textContent = shown ? 'Hide description' : 'Show description';
+        });
+    });
+})();
+</script>
+}

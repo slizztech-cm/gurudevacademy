@@ -1,0 +1,35 @@
+@model List<StudyPdf>
+@{
+    var user = ViewBag.User as AppUser;
+}
+<div class="dash-hero">
+    <div>
+        <h1>📚 Study Material</h1>
+        <p>Download notes and PDFs for defence exams and school subjects.</p>
+    </div>
+    <a href="/student/dashboard" class="btn btn-ghost btn-sm">← Back to Dashboard</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty"><span class="ic">📭</span><p>No study material uploaded yet. Check back soon!</p></div>
+}
+else
+{
+    <div class="grid grid-3">
+        @foreach (var p in Model)
+        {
+            <div class="card pdf-card">
+                <span class="ic">📄</span>
+                <h3>@p.Title</h3>
+                @if (!string.IsNullOrEmpty(p.Subject)) { <span class="chip">@p.Subject</span> }
+                <p>@p.Description</p>
+                <div class="flex between items-center mt">
+                    @if (p.IsFree) { <span class="chip badge-ok">Free</span> }
+                    else { <span class="chip badge-new">₹@p.Price</span> }
+                    <a href="@p.FileUrl" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Download ↓</a>
+                </div>
+            </div>
+        }
+    </div>
+}

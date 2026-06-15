@@ -1,0 +1,38 @@
+@{
+    var categories = ViewBag.Categories as List<CourseCategory> ?? new();
+}
+<section class="hero" style="padding:3rem 0">
+    <div class="container center">
+        <span class="hero-badge">Our Programs</span>
+        <h1>Courses at Gurudev Defence Academy</h1>
+        <p style="margin:1rem auto 0">Defence exam preparation and complete school coaching, all under one roof.</p>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        @foreach (var cat in categories)
+        {
+            <div class="sec-head" style="text-align:left;margin-bottom:1.2rem">
+                <h2>@cat.Icon @cat.Name</h2>
+                @if (!string.IsNullOrEmpty(cat.Description)) { <p style="margin:.4rem 0 0">@cat.Description</p> }
+            </div>
+            <div class="grid grid-3" style="margin-bottom:2.5rem">
+                @foreach (var c in cat.Courses.Where(x => x.IsActive))
+                {
+                    <div class="card course-card">
+                        <span class="ic">@c.Icon</span>
+                        <h3>@c.Name</h3>
+                        <p>@c.Description</p>
+                        <div class="course-meta">
+                            @if (!string.IsNullOrEmpty(c.DurationText)) { <span class="chip">⏱️ @c.DurationText</span> }
+                            @if (c.Fees is > 0) { <span class="chip badge-new">₹@c.Fees</span> }
+                        </div>
+                        <a href="/join?course=@Uri.EscapeDataString(c.Name)" class="btn btn-primary btn-sm mt">Enquire / Join →</a>
+                    </div>
+                }
+            </div>
+        }
+        @if (categories.Count == 0) { <p class="muted center">Courses will be added soon.</p> }
+    </div>
+</section>
